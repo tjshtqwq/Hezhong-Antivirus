@@ -1,0 +1,905 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>712</width>
+    <height>553</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: #e0f7fa</string>
+  </property>
+  <widget class="QLabel" name="label_3">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>20</y>
+     <width>131</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>等线</family>
+     <pointsize>24</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>河众设置</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>110</y>
+     <width>121</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>等线 Light</family>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>实时监控：开启</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_4">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>140</y>
+     <width>121</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>等线 Light</family>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>进程监控：开启</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton">
+   <property name="geometry">
+    <rect>
+     <x>160</x>
+     <y>110</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {  
+    background-color: #e0f7fa;  
+    border: none;
+    color: black;
+    border-radius: 10px;  
+}
+QPushButton:hover {  
+    background-color: #b3e5fc;
+}  
+  
+QPushButton:pressed {  
+    background-color: #80deea;
+}  </string>
+   </property>
+   <property name="text">
+    <string>开启</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_2">
+   <property name="geometry">
+    <rect>
+     <x>250</x>
+     <y>110</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {  
+    background-color: #e0f7fa;  
+    border: none;
+    color: black;
+    border-radius: 10px;  
+}
+QPushButton:hover {  
+    background-color: #b3e5fc;
+}  
+  
+QPushButton:pressed {  
+    background-color: #80deea;
+}  </string>
+   </property>
+   <property name="text">
+    <string>关闭</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_3">
+   <property name="geometry">
+    <rect>
+     <x>160</x>
+     <y>140</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {  
+    background-color: #e0f7fa;  
+    border: none;
+    color: black;
+    border-radius: 10px;  
+}
+QPushButton:hover {  
+    background-color: #b3e5fc;
+}  
+  
+QPushButton:pressed {  
+    background-color: #80deea;
+}  </string>
+   </property>
+   <property name="text">
+    <string>开启</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_5">
+   <property name="geometry">
+    <rect>
+     <x>250</x>
+     <y>140</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {  
+    background-color: #e0f7fa;  
+    border: none;
+    color: black;
+    border-radius: 10px;  
+}
+QPushButton:hover {  
+    background-color: #b3e5fc;
+}  
+  
+QPushButton:pressed {  
+    background-color: #80deea;
+}  </string>
+   </property>
+   <property name="text">
+    <string>关闭</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_6">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>290</y>
+     <width>151</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>等线 Light</family>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>深度学习引擎：开启</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_7">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>290</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {  
+    background-color: #e0f7fa;  
+    border: none;
+    color: black;
+    border-radius: 10px;  
+}
+QPushButton:hover {  
+    background-color: #b3e5fc;
+}  
+  
+QPushButton:pressed {  
+    background-color: #80deea;
+}  </string>
+   </property>
+   <property name="text">
+    <string>开启</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_8">
+   <property name="geometry">
+    <rect>
+     <x>270</x>
+     <y>290</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {  
+    background-color: #e0f7fa;  
+    border: none;
+    color: black;
+    border-radius: 10px;  
+}
+QPushButton:hover {  
+    background-color: #b3e5fc;
+}  
+  
+QPushButton:pressed {  
+    background-color: #80deea;
+}  </string>
+   </property>
+   <property name="text">
+    <string>关闭</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_7">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>260</y>
+     <width>151</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>等线 Light</family>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>特征规则引擎：开启</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_9">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>260</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {  
+    background-color: #e0f7fa;  
+    border: none;
+    color: black;
+    border-radius: 10px;  
+}
+QPushButton:hover {  
+    background-color: #b3e5fc;
+}  
+  
+QPushButton:pressed {  
+    background-color: #80deea;
+}  </string>
+   </property>
+   <property name="text">
+    <string>开启</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_10">
+   <property name="geometry">
+    <rect>
+     <x>270</x>
+     <y>260</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {  
+    background-color: #e0f7fa;  
+    border: none;
+    color: black;
+    border-radius: 10px;  
+}
+QPushButton:hover {  
+    background-color: #b3e5fc;
+}  
+  
+QPushButton:pressed {  
+    background-color: #80deea;
+}  </string>
+   </property>
+   <property name="text">
+    <string>关闭</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_8">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>170</y>
+     <width>151</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>等线 Light</family>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>引导监控：开启</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_11">
+   <property name="geometry">
+    <rect>
+     <x>160</x>
+     <y>170</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {  
+    background-color: #e0f7fa;  
+    border: none;
+    color: black;
+    border-radius: 10px;  
+}
+QPushButton:hover {  
+    background-color: #b3e5fc;
+}  
+  
+QPushButton:pressed {  
+    background-color: #80deea;
+}  </string>
+   </property>
+   <property name="text">
+    <string>开启</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_12">
+   <property name="geometry">
+    <rect>
+     <x>250</x>
+     <y>170</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {  
+    background-color: #e0f7fa;  
+    border: none;
+    color: black;
+    border-radius: 10px;  
+}
+QPushButton:hover {  
+    background-color: #b3e5fc;
+}  
+  
+QPushButton:pressed {  
+    background-color: #80deea;
+}  </string>
+   </property>
+   <property name="text">
+    <string>关闭</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_10">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>420</y>
+     <width>671</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>等线 Light</family>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>注意：“扫描跳过大文件”会跳过文件体积大于50MB的文件！</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_11">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>390</y>
+     <width>161</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>等线 Light</family>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>扫描跳过大文件：关闭</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_13">
+   <property name="geometry">
+    <rect>
+     <x>190</x>
+     <y>390</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {  
+    background-color: #e0f7fa;  
+    border: none;
+    color: black;
+    border-radius: 10px;  
+}
+QPushButton:hover {  
+    background-color: #b3e5fc;
+}  
+  
+QPushButton:pressed {  
+    background-color: #80deea;
+}  </string>
+   </property>
+   <property name="text">
+    <string>开启</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_14">
+   <property name="geometry">
+    <rect>
+     <x>270</x>
+     <y>390</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {  
+    background-color: #e0f7fa;  
+    border: none;
+    color: black;
+    border-radius: 10px;  
+}
+QPushButton:hover {  
+    background-color: #b3e5fc;
+}  
+  
+QPushButton:pressed {  
+    background-color: #80deea;
+}  </string>
+   </property>
+   <property name="text">
+    <string>关闭</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>80</y>
+     <width>51</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>微软雅黑 Light</family>
+     <pointsize>14</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>防护：</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_5">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>230</y>
+     <width>51</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>微软雅黑 Light</family>
+     <pointsize>14</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>扫描：</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_9">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>200</y>
+     <width>141</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>等线 Light</family>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>注册表监控：开启</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_15">
+   <property name="geometry">
+    <rect>
+     <x>160</x>
+     <y>200</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {  
+    background-color: #e0f7fa;  
+    border: none;
+    color: black;
+    border-radius: 10px;  
+}
+QPushButton:hover {  
+    background-color: #b3e5fc;
+}  
+  
+QPushButton:pressed {  
+    background-color: #80deea;
+}  </string>
+   </property>
+   <property name="text">
+    <string>开启</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_16">
+   <property name="geometry">
+    <rect>
+     <x>250</x>
+     <y>200</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {  
+    background-color: #e0f7fa;  
+    border: none;
+    color: black;
+    border-radius: 10px;  
+}
+QPushButton:hover {  
+    background-color: #b3e5fc;
+}  
+  
+QPushButton:pressed {  
+    background-color: #80deea;
+}  </string>
+   </property>
+   <property name="text">
+    <string>关闭</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_12">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>320</y>
+     <width>161</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>等线 Light</family>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>云端扫描引擎：开启</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_13">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>350</y>
+     <width>161</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>等线 Light</family>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>PE启发式引擎：关闭</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_17">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>320</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {  
+    background-color: #e0f7fa;  
+    border: none;
+    color: black;
+    border-radius: 10px;  
+}
+QPushButton:hover {  
+    background-color: #b3e5fc;
+}  
+  
+QPushButton:pressed {  
+    background-color: #80deea;
+}  </string>
+   </property>
+   <property name="text">
+    <string>开启</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_18">
+   <property name="geometry">
+    <rect>
+     <x>270</x>
+     <y>320</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {  
+    background-color: #e0f7fa;  
+    border: none;
+    color: black;
+    border-radius: 10px;  
+}
+QPushButton:hover {  
+    background-color: #b3e5fc;
+}  
+  
+QPushButton:pressed {  
+    background-color: #80deea;
+}  </string>
+   </property>
+   <property name="text">
+    <string>关闭</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_19">
+   <property name="geometry">
+    <rect>
+     <x>270</x>
+     <y>350</y>
+     <width>75</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {  
+    background-color: #e0f7fa;  
+    border: none;
+    color: black;
+    border-radius: 10px;  
+}
+QPushButton:hover {  
+    background-color: #b3e5fc;
+}  
+  
+QPushButton:pressed {  
+    background-color: #80deea;
+}  </string>
+   </property>
+   <property name="text">
+    <string>关闭</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_20">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>350</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {  
+    background-color: #e0f7fa;  
+    border: none;
+    color: black;
+    border-radius: 10px;  
+}
+QPushButton:hover {  
+    background-color: #b3e5fc;
+}  
+  
+QPushButton:pressed {  
+    background-color: #80deea;
+}  </string>
+   </property>
+   <property name="text">
+    <string>开启</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_14">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>450</y>
+     <width>671</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>等线 Light</family>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>PE引擎仍在试验！</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_15">
+   <property name="geometry">
+    <rect>
+     <x>340</x>
+     <y>116</y>
+     <width>181</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>等线 Light</family>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>设置镜像源：河众大陆源</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_21">
+   <property name="geometry">
+    <rect>
+     <x>340</x>
+     <y>150</y>
+     <width>111</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {  
+    background-color: #e0f7fa;  
+    border: none;
+    color: black;
+    border-radius: 10px;  
+}
+QPushButton:hover {  
+    background-color: #b3e5fc;
+}  
+  
+QPushButton:pressed {  
+    background-color: #80deea;
+}  </string>
+   </property>
+   <property name="text">
+    <string>设置为 河众大陆源</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_22">
+   <property name="geometry">
+    <rect>
+     <x>340</x>
+     <y>180</y>
+     <width>111</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {  
+    background-color: #e0f7fa;  
+    border: none;
+    color: black;
+    border-radius: 10px;  
+}
+QPushButton:hover {  
+    background-color: #b3e5fc;
+}  
+  
+QPushButton:pressed {  
+    background-color: #80deea;
+}  </string>
+   </property>
+   <property name="text">
+    <string>设置为 河众台湾源</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_16">
+   <property name="geometry">
+    <rect>
+     <x>340</x>
+     <y>80</y>
+     <width>51</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>微软雅黑 Light</family>
+     <pointsize>14</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>更新：</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_17">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>480</y>
+     <width>671</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>等线 Light</family>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>镜像源设置说明：河众大陆源为最新源 河众台湾源每30分钟与大陆源同步一次</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
