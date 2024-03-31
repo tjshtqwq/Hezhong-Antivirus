@@ -455,6 +455,52 @@ class Ui_Form(object):
         font.setPointSize(10)
         self.label_17.setFont(font)
         self.label_17.setObjectName("label_17")
+        self.label_18 = QtWidgets.QLabel(Form)
+        self.label_18.setGeometry(QtCore.QRect(360, 260, 341, 21))
+        font = QtGui.QFont()
+        font.setFamily("微软雅黑 Light")
+        font.setPointSize(12)
+        self.label_18.setFont(font)
+        self.label_18.setObjectName("label_18")
+        self.label_19 = QtWidgets.QLabel(Form)
+        self.label_19.setGeometry(QtCore.QRect(360, 290, 181, 20))
+        font = QtGui.QFont()
+        font.setFamily("等线 Light")
+        font.setPointSize(12)
+        self.label_19.setFont(font)
+        self.label_19.setObjectName("label_19")
+        self.pushButton_23 = QtWidgets.QPushButton(Form)
+        self.pushButton_23.setGeometry(QtCore.QRect(360, 320, 75, 23))
+        self.pushButton_23.setStyleSheet("QPushButton {  \n"
+"    background-color: #e0f7fa;  \n"
+"    border: none;\n"
+"    color: black;\n"
+"    border-radius: 10px;  \n"
+"}\n"
+"QPushButton:hover {  \n"
+"    background-color: #b3e5fc;\n"
+"}  \n"
+"  \n"
+"QPushButton:pressed {  \n"
+"    background-color: #80deea;\n"
+"}  ")
+        self.pushButton_23.setObjectName("pushButton_23")
+        self.pushButton_24 = QtWidgets.QPushButton(Form)
+        self.pushButton_24.setGeometry(QtCore.QRect(450, 320, 75, 23))
+        self.pushButton_24.setStyleSheet("QPushButton {  \n"
+"    background-color: #e0f7fa;  \n"
+"    border: none;\n"
+"    color: black;\n"
+"    border-radius: 10px;  \n"
+"}\n"
+"QPushButton:hover {  \n"
+"    background-color: #b3e5fc;\n"
+"}  \n"
+"  \n"
+"QPushButton:pressed {  \n"
+"    background-color: #80deea;\n"
+"}  ")
+        self.pushButton_24.setObjectName("pushButton_24")
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
@@ -499,3 +545,7 @@ class Ui_Form(object):
         self.pushButton_22.setText(_translate("Form", "设置为 河众台湾源"))
         self.label_16.setText(_translate("Form", "更新："))
         self.label_17.setText(_translate("Form", "镜像源设置说明：河众大陆源为最新源 河众台湾源每30分钟与大陆源同步一次"))
+        self.label_18.setText(_translate("Form", "危险（启动这里的选项可能会导致系统崩溃！）："))
+        self.label_19.setText(_translate("Form", "深度学习参与监控：关闭"))
+        self.pushButton_23.setText(_translate("Form", "开启"))
+        self.pushButton_24.setText(_translate("Form", "关闭"))

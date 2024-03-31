@@ -899,6 +899,100 @@ QPushButton:pressed {
     <string>镜像源设置说明：河众大陆源为最新源 河众台湾源每30分钟与大陆源同步一次</string>
    </property>
   </widget>
+  <widget class="QLabel" name="label_18">
+   <property name="geometry">
+    <rect>
+     <x>360</x>
+     <y>260</y>
+     <width>341</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>微软雅黑 Light</family>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>危险（启动这里的选项可能会导致系统崩溃！）：</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_19">
+   <property name="geometry">
+    <rect>
+     <x>360</x>
+     <y>290</y>
+     <width>181</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>等线 Light</family>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>深度学习参与监控：关闭</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_23">
+   <property name="geometry">
+    <rect>
+     <x>360</x>
+     <y>320</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {  
+    background-color: #e0f7fa;  
+    border: none;
+    color: black;
+    border-radius: 10px;  
+}
+QPushButton:hover {  
+    background-color: #b3e5fc;
+}  
+  
+QPushButton:pressed {  
+    background-color: #80deea;
+}  </string>
+   </property>
+   <property name="text">
+    <string>开启</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_24">
+   <property name="geometry">
+    <rect>
+     <x>450</x>
+     <y>320</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {  
+    background-color: #e0f7fa;  
+    border: none;
+    color: black;
+    border-radius: 10px;  
+}
+QPushButton:hover {  
+    background-color: #b3e5fc;
+}  
+  
+QPushButton:pressed {  
+    background-color: #80deea;
+}  </string>
+   </property>
+   <property name="text">
+    <string>关闭</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>

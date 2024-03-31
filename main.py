@@ -6,7 +6,8 @@ import argparse
 
 watcher_dl = False
 
-
+# C:\Users\Temper\AppData\Local\Programs\Python\Python38\Scripts\pyinstaller.exe -D main.py -w --uac-admin --hiddenimport tensorflow -i r.ico --version-file file_v.txt --noconfirm
+#  --contents-directory .
 
 import sys
 import ctypes
@@ -79,7 +80,7 @@ import pefile
 import sys
 import threading
 import tkinter as tk
-from PyQt5.QtCore import QThread, pyqtSignal, pyqtSlot
+from PyQt5.QtCore import QThread, pyqtSignal, pyqtSlot, QTimer
 import pystray
 import requests  # 导入库
 import PyQt5.QtWidgets as qtw
@@ -143,7 +144,17 @@ def virusnamedecode(name):
     if name == 'None' or name is None:
         return False
     try:
-        if 'MALWARE' in name:
+        if 'HezhongRule' in name:
+            n = ''
+            for i in name.split('_'):
+                if i == 'HezhongRule':
+                    pass
+
+                else:
+                    n += f'{i}.'
+
+            return n[:-1]
+        elif 'MALWARE' in name:
             yui1 = name.split('_')[2]
             if 'Redline' in name:
                 return 'Spyware.RedlineSteal..'
@@ -168,11 +179,6 @@ def virusnamedecode(name):
             if yui23 == 'CobaltStrike':
                 yui2 = 'BackDoor'
             return '{}.{}.{}'.format(yui2, yui23, yui233)
-        elif 'HezhongRule' in name:
-            yui3 = name.split('_')[1]
-            yui32 = name.split('_')[2]
-            yui332 = name.split('_')[3]
-            return '{}.{}.{}'.format(yui3, yui32, yui332)
         else:
             if 'Trojan' in name:
                 if 'MSIL' in name:
@@ -242,17 +248,6 @@ class VirusScan:
         pass
 
 
-    def data_generator(self, data, labels, max_len=200000, batch_size=64, shuffle=True):
-        idx = numpy.arange(len(data))
-        if shuffle:
-            numpy.random.shuffle(idx)
-        batches = [idx[range(batch_size * i, min(len(data), batch_size * (i + 1)))] for i in
-                   range(len(data) // batch_size + 1)]
-        while True:
-            for i in batches:
-                xx = preprocess(data[i], max_len)[0]
-                yy = labels[i]
-                yield (xx, yy)
 
     def predict(self, model, fn_list, label, filedata, batch_size=1, verbose=0):
         max_len = model.input.shape[1]
@@ -261,7 +256,6 @@ class VirusScan:
 
         if sequence is not None:
             pred = model.predict(numpy.array([sequence]), verbose=0)
-            print(pred)
             return pred
         else:
             print("File preprocessing failed.")
@@ -294,8 +288,6 @@ class VirusScan:
             dat = f'-------------------------------7d83e2d7a141e\r\nContent-Disposition: form-data; name="md5s"\r\n\r\n{md5}\r\n-------------------------------7d83e2d7a141e\r\nContent-Disposition: form-data; name="format"\r\n\r\nXML\r\n-------------------------------7d83e2d7a141e\r\nContent-Disposition: form-data; name="product"\r\n\r\n360zip\r\n-------------------------------7d83e2d7a141e\r\nContent-Disposition: form-data; name="combo"\r\n\r\n360zip_main\r\n-------------------------------7d83e2d7a141e\r\nContent-Disposition: form-data; name="v"\r\n\r\n2\r\n-------------------------------7d83e2d7a141e\r\nContent-Disposition: form-data; name="osver"\r\n\r\n5.1\r\n-------------------------------7d83e2d7a141e\r\nContent-Disposition: form-data; name="vk"\r\n\r\na03bc211\r\n-------------------------------7d83e2d7a141e\r\nContent-Disposition: form-data; name="mid"\r\n\r\n8a40d9eff408a78fe9ec10a0e7e60f62\r\n-------------------------------7d83e2d7a141e--'
             r = requests.post('http://qup.f.360.cn/file_health_info.php', data=dat, timeout=3)
             print(r.text)
-            if r.status_code == 200 and int(re.findall('<is_sys_file>(.*?)</is_sys_file>', r.text, re.S)[0]) == 1:
-                return False
             return r.status_code == 200 and float(re.findall('<e_level>(.*?)</e_level>', r.text, re.S)[0]) > 50
         except:
             return False
@@ -325,7 +317,7 @@ global pe
 def proess_watcher_scaner(seter, whitedb, rules, sc, model, proc=None, path=None, mot=False):
     try:
         global watcher_dl
-        print(path)
+        # print(path)
         if not mot:
             path = proc.exe()
             pid = proc.info['pid']
@@ -337,6 +329,13 @@ def proess_watcher_scaner(seter, whitedb, rules, sc, model, proc=None, path=None
             filda = f.read()
         clouduse = seter['scan']['cloud']
         yaruse = seter['scan']['yara']
+        mluse1 = seter['scan']['heur']
+        dlw = seter['setting']['dlw']
+        if (dlw == 'True' or dlw is True) and (mluse1 == 'True' or mluse1 is True):
+            mluse = 'True'
+        else:
+            mluse = 'False'
+        # print(mluse)
         vr1 = VirusScan.md5_scan(sc, path, md5_watchdatabase, filda)
         virusname1 = vr1[0]
 
@@ -364,36 +363,14 @@ def proess_watcher_scaner(seter, whitedb, rules, sc, model, proc=None, path=None
             with open('./Malwaregl/{}.ini'.format(filenumber), 'w', encoding='utf-8') as f:
                 f.write(path)
             os.remove(path)
-        else:
-            if yaruse == 'True' or yaruse is True:
-                print('Yara Scan')
+            return 0
+        if yaruse == 'True' or yaruse is True:
+            # print('Yara Scan')
 
-                yaa = VirusScan.yarascan(sc, rules, path, filda)
-                if yaa is None or yaa == 'None':
-                    if clouduse == 'True' or clouduse is True:
-                        print('Cloud Scan')
-                        if VirusScan.cscan(sc, vr1[1]):
-                            threading.Thread(target=show_noti, args=[process_string(path, 50), 'Malware.Gen(qc)'],
-                                             daemon=True).start()
-                            if not mot:
-                                proc.kill()
-                            i = 0
-                            while True:
-                                i += 1
-                                filename = str(i) + ".tro"
-                                filepath = os.path.join('./Malwaregl', filename)
-                                if not os.path.exists(filepath):
-                                    lastf = filepath
-                                    break
-                            fb = base64.b64encode(filda)
-                            os.remove(path)
-                            filenumber = os.path.basename(lastf)
-                            with open('{}'.format(lastf), 'wb') as f:
-                                f.write(fb)
-
-                            with open('./Malwaregl/{}.ini'.format(filenumber), 'w', encoding='utf-8') as f:
-                                f.write(path)
-
+            yaa = VirusScan.yarascan(sc, rules, path, filda)
+            if yaa is None or yaa == 'None':
+                pass
+            else:
                 yaa2 = virusnamedecode(str(yaa[0]))
                 threading.Thread(target=show_noti, args=[process_string(path, 50), yaa2], daemon=True).start()
                 if not mot:
@@ -415,8 +392,99 @@ def proess_watcher_scaner(seter, whitedb, rules, sc, model, proc=None, path=None
                     f.write(path)
 
                 os.remove(path)
-    except:
-        pass
+                return 0
+        if clouduse == 'True' or clouduse is True:
+            # print('Cloud Scan')
+            if VirusScan.cscan(sc, vr1[1]):
+                threading.Thread(target=show_noti, args=[process_string(path, 50), 'Malware.Gen(qc)'],
+                                         daemon=True).start()
+                if not mot:
+                    proc.kill()
+                i = 0
+                while True:
+                    i += 1
+                    filename = str(i) + ".tro"
+                    filepath = os.path.join('./Malwaregl', filename)
+                    if not os.path.exists(filepath):
+                        lastf = filepath
+                        break
+                fb = base64.b64encode(filda)
+                os.remove(path)
+                filenumber = os.path.basename(lastf)
+                with open('{}'.format(lastf), 'wb') as f:
+                    f.write(fb)
+
+                with open('./Malwaregl/{}.ini'.format(filenumber), 'w', encoding='utf-8') as f:
+                    f.write(path)
+                return 0
+        # print(mluse)
+        if mluse == 'True' or mluse is True:
+            try:
+                pe_rule = '''
+                rule PE
+                {
+                    meta:
+                        author = "Hezhong Technology"
+                    condition:
+                        uint16(0) == 0x5a4d
+                }
+                '''
+                rulePE = yara.compile(source=pe_rule)
+                isPE = rulePE.match(data=filda)
+
+                if isPE != []:
+                    flabels = numpy.zeros((1,))
+                    pred1 = VirusScan.predict(sc, model, path, flabels, filda, 16, 0)
+                    pred = pred1[0][0]
+                    try:
+                        if pred >= 0.9:
+                            ml_virusname = 'DL.Trojan.{}.a'.format(round(pred * 100))
+                        elif pred >= 0.8:
+                            ml_virusname = 'DL.Trojan.{}.b'.format(round(pred * 100))
+                        elif pred >= 0.7:
+                            ml_virusname = 'DL.Trojan.{}.c'.format(round(pred * 100))
+                        else:
+                            ml_virusname = None
+                    except IndexError:
+                        ml_virusname = None
+                    print(ml_virusname)
+                    if ml_virusname is not None:
+                        print('Start Thread!')
+                        threading.Thread(target=show_noti, args=[process_string(path, 50), ml_virusname],
+                                         daemon=True).start()
+                        if not mot:
+                            proc.kill()
+                        i = 0
+                        while True:
+                            i += 1
+                            filename = str(i) + ".tro"
+                            filepath = os.path.join('./Malwaregl', filename)
+                            if not os.path.exists(filepath):
+                                lastf = filepath
+                                break
+                        fb = base64.b64encode(filda)
+                        filenumber = os.path.basename(lastf)
+                        with open('{}'.format(lastf), 'wb') as f:
+                            f.write(fb)
+
+                        with open('./Malwaregl/{}.ini'.format(filenumber), 'w', encoding='utf-8') as f:
+                            f.write(path)
+
+                        os.remove(path)
+                        return 0
+                else:
+                    pass
+            except:
+                pass
+            # def predict(self, model, fn_list, label, filedata, batch_size=1, verbose=0):
+
+
+
+
+
+        return 0
+    except Exception as ff:
+        print(ff)
 
 
 
@@ -432,6 +500,7 @@ def proess_watcher():
         whitedb = f.read()
     seter = ConfigParser()
     seter.read('cfg.ini')
+    model = load_model('./bd/hzml.h5')
 
     yararule_co2 = VirusScan.getrules(sc, './bd/yara')
     running_pross1 = []
@@ -456,9 +525,9 @@ def proess_watcher():
                 path = proc.exe()
                 running_pross2.append(path)
                 running_pross1.append(pid)
-                print('Scan!')
+                # print('Scan!')
                 threading.Thread(target=proess_watcher_scaner,
-                                 args=[seter, whitedb, yararule_co2, sc, '', proc, None, False]).start()
+                                 args=[seter, whitedb, yararule_co2, sc, model, proc, None, False]).start()
 
 
             except Exception:
@@ -609,6 +678,7 @@ class Watch_FileMonitor(FileSystemEventHandler):
             self.whitedb = f.read()
         self.seter = ConfigParser()
         self.seter.read('cfg.ini')
+        self.model = load_model('./bd/hzml.h5')
 
     def on_created(self, event):  # 利用watchdog监控文件
         global ProtectB
@@ -620,7 +690,7 @@ class Watch_FileMonitor(FileSystemEventHandler):
                     pass
                 else:
                     threading.Thread(target=proess_watcher_scaner,
-                                     args=[self.seter, self.whitedb, self.yaar, sc, None, None,
+                                     args=[self.seter, self.whitedb, self.yaar, sc, self.model, None,
                                            str(event.src_path).replace('\\', '/'),
                                            True]).start()
 
@@ -637,7 +707,7 @@ class Watch_FileMonitor(FileSystemEventHandler):
                     pass
                 else:
                     threading.Thread(target=proess_watcher_scaner,
-                                     args=[self.seter, self.whitedb, self.yaar, sc, None, None,
+                                     args=[self.seter, self.whitedb, self.yaar, sc, self.model, None,
                                            str(event.src_path).replace('\\', '/'),
                                            True]).start()
 
@@ -981,6 +1051,22 @@ def setyq():
         set_ui.label_15.setText('设置镜像源：河众大陆源')
         readini.write(open('cfg.ini', 'r+'))
 
+    def offdlw():
+        global set_ui
+        readini = ConfigParser()
+        readini.read('cfg.ini', encoding='utf-8')
+        readini.set('setting', 'dlw', 'False')
+        set_ui.label_19.setText('深度学习参与监控：关闭')
+        readini.write(open('cfg.ini', 'r+'))
+
+    def ondlw():
+        global set_ui
+        readini = ConfigParser()
+        readini.read('cfg.ini', encoding='utf-8')
+        readini.set('setting', 'dlw', 'True')
+        set_ui.label_19.setText('深度学习参与监控：开启')
+        readini.write(open('cfg.ini', 'r+'))
+
     def closeEvent8(event):
         event.ignore()
         setwindow.hide()
@@ -997,6 +1083,7 @@ def setyq():
     enpe = readini['scan']['pe']
     enc = readini['scan']['cloud']
     update_webs = readini['scan']['updateweb']
+    dlws = readini['setting']['dlw']
     setwindow = qtw.QWidget()
     set_ui = setfrom()
     set_ui.setupUi(setwindow)
@@ -1024,6 +1111,8 @@ def setyq():
     set_ui.pushButton_18.clicked.connect(offc)
     set_ui.pushButton_21.clicked.connect(gz_down)
     set_ui.pushButton_22.clicked.connect(tw_down)
+    set_ui.pushButton_23.clicked.connect(ondlw)
+    set_ui.pushButton_24.clicked.connect(offdlw)
     setwindow.setFixedSize(setwindow.width(), setwindow.height())
     if enheur == 'True':
         set_ui.label_6.setText('深度学习引擎：开启')
@@ -1067,6 +1156,10 @@ def setyq():
         set_ui.label_15.setText('设置镜像源：河众大陆源')
     else:
         set_ui.label_15.setText('设置镜像源：其他源 ⚠')
+    if dlws == 'True':
+        set_ui.label_19.setText('深度学习参与监控：开启')
+    else:
+        set_ui.label_19.setText('深度学习参与监控：关闭')
 
 
 clickerconnect = False
@@ -1180,11 +1273,11 @@ class guiscan:
                 clickerconnect = True  # 设置标志为True，表示已经连接过了
 
         def scan_a_file(file, model, md5db, yardb, Avscanclass, useyara, useheur, whitedb, usec, usepe):
-            with open(file, 'rb') as f:
-                fda = f.read()
-
-            self.scanlog += '\n 扫描文件：{}    ......'.format(file)
             try:
+                with open(file, 'rb') as f:
+                    fda = f.read()
+
+                self.scanlog += '\n 扫描文件：{}    ......'.format(file)
 
                 md5virus = VirusScan.md5_scan(Avscanclass, file, md5db, fda)
                 heurmd5name = md5virus[1]
@@ -1197,7 +1290,6 @@ class guiscan:
                 if md5virus[0]:
                     print('MD5')
                     self.infectedfiles += 1
-
                     self.scanlog += '-> 发现了：Malware.Gen'
                     self.thread_scan_fin = True
                     self.thread_scan_virname = 'Malware.Gen'
@@ -1206,34 +1298,18 @@ class guiscan:
                     clor = VirusScan.cscan(Avscanclass, heurmd5name)
                     if clor:
                         self.infectedfiles += 1
-
                         self.scanlog += '-> 发现了：Malware.Gen(qc)'
-                        self.thread_scan_fin = True
                         self.thread_scan_virname = 'Malware.Gen(qc)'
-                        return 0
-                    elif clor is None:
                         self.thread_scan_fin = True
-                        self.thread_scan_virname = ''
                         return 0
 
-                if usepe == 'True':
-                    try:
-                        peob = pefile.PE(file)
-                        if VirusScan.pescan(Avscanclass, hz_funcs, peob):
-                            self.infectedfiles += 1
 
-                            self.scanlog += '-> 发现了：HEUR:Trojan.Generic'
-                            self.thread_scan_fin = True
-                            self.thread_scan_virname = 'HEUR:Trojan.Generic'
-                            return 0
-                    except:
-                        pass
+
 
                 if useyara == 'True' or useyara is True:  # Yara检查未知病毒
                     yaa = VirusScan.yarascan(Avscanclass, yardb, file, fda)
                     print(yaa)
                     if yaa is None:
-                        self.thread_scan_virname = None
                         pass
                     else:
                         print(str(yaa[0]))
@@ -1243,16 +1319,28 @@ class guiscan:
                         scan_ui.label_5.setText('发现病毒：{}'.format(self.infectedfiles))
                         self.scanlog += '-> 发现了：{}'.format(yaa22)
                         QCoreApplication.processEvents()
-                        self.thread_scan_fin = True
                         self.thread_scan_virname = yaa22
+                        self.thread_scan_fin = True
                         return 0
+                if usepe == 'True':
+                    try:
+                        peob = pefile.PE(file)
+                        if VirusScan.pescan(Avscanclass, hz_funcs, peob):
+                            self.infectedfiles += 1
+
+                            self.scanlog += '-> 发现了：HEUR:Trojan.Generic'
+                            self.thread_scan_virname = 'HEUR:Trojan.Generic'
+                            self.thread_scan_fin = True
+                            return 0
+                    except:
+                        pass
                 if useheur == 'True':
                     print('fff')
                     try:
                         pefile.PE(file)
                     except Exception:
-                        self.thread_scan_fin = True
                         self.thread_scan_virname = None
+                        self.thread_scan_fin = True
                         return 0
 
                     else:
@@ -1282,9 +1370,10 @@ class guiscan:
                         else:
                             self.thread_scan_fin = True
                             return 0
-                    self.thread_scan_fin = True
-                    return 0
+                self.thread_scan_fin = True
+                return 0
             except:
+                self.thread_scan_virname = None
                 self.thread_scan_fin = True
                 return 0
 
@@ -1299,7 +1388,7 @@ class guiscan:
             else:
                 print('似乎启动了右键扫描！')
                 self.directory = stpaths
-            scan_ui.label.setText(self.directory)
+                scan_ui.label.setText(self.directory)
             print(self.directory)
             if not self.directory:
                 return 0
@@ -1363,6 +1452,7 @@ class guiscan:
 
 
                 for root, _, files in os.walk(fileer):
+
                     for file in files:
                         self.thread_scan_fin = False
                         self.thread_scan_virname = ''
