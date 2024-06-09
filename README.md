@@ -1,3 +1,3 @@
-Hezhong AntiVirus Software  
-软件使用GPLv3编写  
-网站：https://bbs.hezhongkj.top/  
+Hezhong AntiVirus Software src
+GPLv3 
+Website：https://bbs.hezhongkj.top/  
