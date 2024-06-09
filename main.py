@@ -1,4 +1,39 @@
 import shutil
+import traceback
+
+import colorama as cama
+cama.init()
+try:
+    with open('latestlog.log', 'w') as f:
+        f.write('')
+except:
+    pass
+def plog(texttype, text): # 日志组件
+    '''
+    :param texttype: Color Type: 1, ERROR 2, INFO 3, WARN
+    :param text: Text
+    :return: None
+    '''
+    try:
+        if texttype == 1:
+            print(cama.Fore.RED + '[ERROR] ', end='\n')
+            print(text)
+            with open('latestlog.log', 'a+') as f:
+                f.write('[ERROR] ' + text + '\n')
+        if texttype == 2:
+            print(cama.Fore.GREEN + '[INFO] ', end='')
+            print(text)
+            with open('latestlog.log', 'a+') as f:
+                f.write('[INFO] ' + text + '\n')
+        if texttype == 3:
+            print(cama.Fore.YELLOW + '[WARN] ', end='')
+            print(text)
+            with open('latestlog.log', 'a+') as f:
+                f.write('[WARN] ' + text + '\n')
+    except:
+        pass
+
+plog(2, 'Hezhong init......')
 
 import win32api
 import win32con
@@ -107,13 +142,18 @@ import gc
 from preprocess import preprocess
 import numpy
 import at
-from pedb import hz_funcs
+from pedb import hz_funcs # 河众导入表数据库
 import tensorflow as tf
+
+plog(2, 'Loaded Package')
+
+
 
 # 隐藏所有GPU设备
 physical_devices = tf.config.list_physical_devices('GPU')
 if len(physical_devices) > 0:
     tf.config.set_visible_devices([], 'GPU')
+plog(2, 'Set Tensorflow Config')
 
 global watchmbra
 global watchreg
@@ -133,6 +173,10 @@ global mainui
 global scanwindow
 
 
+
+plog(2, 'Init Function')
+
+
 def writecfg(datatext, xx, xx2):
     config = ConfigParser()
     config.set(xx, xx2, datatext)
@@ -140,7 +184,8 @@ def writecfg(datatext, xx, xx2):
         config.write(configfile)
 
 
-def virusnamedecode(name):
+
+def virusnamedecode(name): # 解码病毒名称
     if name == 'None' or name is None:
         return False
     try:
@@ -219,7 +264,9 @@ def virusnamedecode(name):
                 else:
                     return 'NH:Malware.Gen'
     except:
-        return 'NH:Malware.Gen'
+        plog(1, traceback.format_exc())
+        return 'Generic'
+plog(2, 'VirusName Decoder Loaded')
 
 
 def softwareexit():
@@ -243,6 +290,7 @@ def softwaretp():
     threading.Thread(target=icon.run, daemon=True).start()
 
 
+
 class VirusScan:
     def __init__(self):
         pass
@@ -258,7 +306,6 @@ class VirusScan:
             pred = model.predict(numpy.array([sequence]), verbose=0)
             return pred
         else:
-            print("File preprocessing failed.")
             return None
 
     def yarascan(self, rule, file, fdb):
@@ -276,7 +323,6 @@ class VirusScan:
         return yararule
 
     def md5_scan(self, path, database, fdb):
-        print(path)
         file_md5 = hashlib.md5(fdb).hexdigest()
         if file_md5 in database:
             return ['Malware.Gen', file_md5]
@@ -284,13 +330,7 @@ class VirusScan:
             return [False, file_md5]
 
     def cscan(self, md5):
-        try:
-            dat = f'-------------------------------7d83e2d7a141e\r\nContent-Disposition: form-data; name="md5s"\r\n\r\n{md5}\r\n-------------------------------7d83e2d7a141e\r\nContent-Disposition: form-data; name="format"\r\n\r\nXML\r\n-------------------------------7d83e2d7a141e\r\nContent-Disposition: form-data; name="product"\r\n\r\n360zip\r\n-------------------------------7d83e2d7a141e\r\nContent-Disposition: form-data; name="combo"\r\n\r\n360zip_main\r\n-------------------------------7d83e2d7a141e\r\nContent-Disposition: form-data; name="v"\r\n\r\n2\r\n-------------------------------7d83e2d7a141e\r\nContent-Disposition: form-data; name="osver"\r\n\r\n5.1\r\n-------------------------------7d83e2d7a141e\r\nContent-Disposition: form-data; name="vk"\r\n\r\na03bc211\r\n-------------------------------7d83e2d7a141e\r\nContent-Disposition: form-data; name="mid"\r\n\r\n8a40d9eff408a78fe9ec10a0e7e60f62\r\n-------------------------------7d83e2d7a141e--'
-            r = requests.post('http://qup.f.360.cn/file_health_info.php', data=dat, timeout=3)
-            print(r.text)
-            return r.status_code == 200 and float(re.findall('<e_level>(.*?)</e_level>', r.text, re.S)[0]) > 50
-        except:
-            return False
+        return False
 
     def pescan(self, db, peo):
         try:
@@ -300,11 +340,14 @@ class VirusScan:
                     try:
                         pefunc.append(str(func.name, "utf-8"))
                     except:
-                        pass
+                        plog(1, traceback.format_exc())
             return pefunc in db
 
         except:
+            plog(1, traceback.format_exc())
             return False
+
+plog(2, 'AntiVirus Engine Loaded')
 
 
 def loadprotect():
@@ -312,6 +355,8 @@ def loadprotect():
 
 
 global pe
+
+
 
 
 def proess_watcher_scaner(seter, whitedb, rules, sc, model, proc=None, path=None, mot=False):
@@ -345,6 +390,7 @@ def proess_watcher_scaner(seter, whitedb, rules, sc, model, proc=None, path=None
 
         if virusname1:
             threading.Thread(target=show_noti, args=[process_string(path, 50), virusname1], daemon=True).start()
+            plog(2, 'Moniter Found a Threat! Malware.Gen')
             if not mot:
                 proc.kill()
             time.sleep(0.1)
@@ -373,6 +419,7 @@ def proess_watcher_scaner(seter, whitedb, rules, sc, model, proc=None, path=None
             else:
                 yaa2 = virusnamedecode(str(yaa[0]))
                 threading.Thread(target=show_noti, args=[process_string(path, 50), yaa2], daemon=True).start()
+                plog(2, f'Moniter Found a Threat! {yaa2}')
                 if not mot:
                     proc.kill()
                 i = 0
@@ -398,6 +445,7 @@ def proess_watcher_scaner(seter, whitedb, rules, sc, model, proc=None, path=None
             if VirusScan.cscan(sc, vr1[1]):
                 threading.Thread(target=show_noti, args=[process_string(path, 50), 'Malware.Gen(qc)'],
                                          daemon=True).start()
+                plog(2, 'Moniter Found a Threat! Malware.Gen(qc)')
                 if not mot:
                     proc.kill()
                 i = 0
@@ -417,7 +465,6 @@ def proess_watcher_scaner(seter, whitedb, rules, sc, model, proc=None, path=None
                 with open('./Malwaregl/{}.ini'.format(filenumber), 'w', encoding='utf-8') as f:
                     f.write(path)
                 return 0
-        # print(mluse)
         if mluse == 'True' or mluse is True:
             try:
                 pe_rule = '''
@@ -446,12 +493,12 @@ def proess_watcher_scaner(seter, whitedb, rules, sc, model, proc=None, path=None
                         else:
                             ml_virusname = None
                     except IndexError:
+                        plog(1, traceback.format_exc())
                         ml_virusname = None
-                    print(ml_virusname)
                     if ml_virusname is not None:
-                        print('Start Thread!')
                         threading.Thread(target=show_noti, args=[process_string(path, 50), ml_virusname],
                                          daemon=True).start()
+                        plog(2, f'Moniter Found a Threat! {ml_virusname}')
                         if not mot:
                             proc.kill()
                         i = 0
@@ -475,7 +522,7 @@ def proess_watcher_scaner(seter, whitedb, rules, sc, model, proc=None, path=None
                 else:
                     pass
             except:
-                pass
+                plog(1, traceback.format_exc())
             # def predict(self, model, fn_list, label, filedata, batch_size=1, verbose=0):
 
 
@@ -484,7 +531,9 @@ def proess_watcher_scaner(seter, whitedb, rules, sc, model, proc=None, path=None
 
         return 0
     except Exception as ff:
-        print(ff)
+        plog(1, traceback.format_exc())
+
+
 
 
 
@@ -514,10 +563,9 @@ def proess_watcher():
                 if pid in running_pross1 and path in running_pross2:
                     continue
             except:
-                pass
+                plog(1, traceback.format_exc())
             time.sleep(0.01)
             if prosswa is False:
-                print('停止进程监控！')
                 return 0
 
             try:
@@ -525,13 +573,13 @@ def proess_watcher():
                 path = proc.exe()
                 running_pross2.append(path)
                 running_pross1.append(pid)
-                # print('Scan!')
                 threading.Thread(target=proess_watcher_scaner,
                                  args=[seter, whitedb, yararule_co2, sc, model, proc, None, False]).start()
 
 
             except Exception:
-                pass
+                plog(1, traceback.format_exc())
+
 
 
 def monitor_files(path):
@@ -546,18 +594,14 @@ def monitor_files(path):
     while True:
         time.sleep(1)
         if ProtectF is False:
-            print('停止监控！')
             observer.stop()
             break
 
 
 def process_string(s, a):
-    # 检查字符串长度是否大于20
     if len(s) > a:
-        # 如果大于50，则保留前20位和后20位，并用省略号连接
         return s[:15] + "..." + s[-15:]
     else:
-        # 如果小于或等于50，则原样返回
         return s
 
 
@@ -695,7 +739,7 @@ class Watch_FileMonitor(FileSystemEventHandler):
                                            True]).start()
 
             except:
-                pass
+                plog(1, traceback.format_exc())
 
     def on_modified(self, event):  # 利用watchdog监控文件
         global ProtectB
@@ -712,7 +756,7 @@ class Watch_FileMonitor(FileSystemEventHandler):
                                            True]).start()
 
             except:
-                pass
+                plog(1, traceback.format_exc())
 
     def show_popup(self, file_path, virus_name):
         for _ in range(1, 2):
@@ -737,6 +781,8 @@ class Watch_FileMonitor(FileSystemEventHandler):
                 f.write(file_path)
             os.remove(file_path)
 
+plog(2, 'File & Process Moniter Loaded')
+
 
 def mbrwatcher():
     global watchmbra
@@ -748,7 +794,6 @@ def mbrwatcher():
             with open('\\\\.\\PhysicalDrive0', 'rb') as mbrf:
                 mbrs2 = mbrf.read(1024)
             if mbrs2 != mbrs:
-                print('发现引导扇区被修改！')
                 threading.Thread(target=show_noti2,
                                  args=['监控已经发现您的计算机磁盘保留扇区已经被更改，我们已经修复您的磁盘保留扇区。', ],
                                  daemon=True).start()
@@ -756,11 +801,12 @@ def mbrwatcher():
                     mbrf.seek(0)
                     mbrf.write(mbrs)
             if not watchmbra:
-                print('退出MBR保护')
                 break
 
     except PermissionError:
-        print('权限不足')
+        plog(1, traceback.format_exc())
+
+plog(2, 'Boot Moniter Loaded')
 
 
 def reg_mot2():
@@ -777,7 +823,6 @@ def reg_mot2():
                                          win32con.KEY_ALL_ACCESS)
             if win32api.RegQueryValueEx(kye1, '')[0] != 'exefile':
                 win32api.RegSetValue(kye1, '', win32con.REG_SZ, 'exefile')
-                print('他奶奶的！')
                 threading.Thread(target=show_noti2,
                                  args=[
                                      '发现系统关键注册表被修改：EXE关联项目。注册表已经被修复。', ],
@@ -787,11 +832,12 @@ def reg_mot2():
             pass
 
 
+
+
 def reg_mot():  # reg_mot() 的注册表规则来自PYAS 云酱天天被撅
     global watchreg
     threading.Thread(target=reg_mot2, daemon=True).start()
     while watchreg:
-        print(watchreg)
         time.sleep(0.1)
         try:
 
@@ -844,8 +890,10 @@ def reg_mot():  # reg_mot() 的注册表规则来自PYAS 云酱天天被撅
                     except:
                         pass
                 win32api.RegCloseKey(rgs2)
-        except:
-            print('ERROR WATCHREG')
+        except Exception:
+            plog(1, traceback.format_exc())
+
+plog(2, 'Register Moniter Loaded')
 
 
 global set_ui
@@ -865,6 +913,7 @@ def setyq():
         set_ui.label_6.setText('深度学习引擎：开启')
         readini.write(open('cfg.ini', 'r+'))
         watcher_dl = True
+        plog(2, 'DeepLearning Engine On')
 
     def offheur():
         global set_ui
@@ -875,6 +924,7 @@ def setyq():
         set_ui.label_6.setText('深度学习引擎：关闭')
         readini.write(open('cfg.ini', 'r+'))
         watcher_dl = False
+        plog(2, 'DeepLearning Engine Off')
 
     def onyara():
         global set_ui
@@ -883,6 +933,7 @@ def setyq():
         readini.set('scan', 'yara', 'True')
         set_ui.label_7.setText('Yara规则引擎：开启')
         readini.write(open('cfg.ini', 'r+'))
+        plog(2, 'yara Engine On')
 
     def offyara():
         global set_ui
@@ -891,12 +942,8 @@ def setyq():
         readini.set('scan', 'yara', 'False')
         set_ui.label_7.setText('Yara规则引擎：关闭')
         readini.write(open('cfg.ini', 'r+'))
+        plog(2, 'yara Engine Off')
 
-    def onregprotect():
-        pass
-
-    def offregprotect():
-        pass
 
     def onfileprotect():
         global set_ui
@@ -909,6 +956,7 @@ def setyq():
         ProtectF = True
         SysWatchTread = threading.Thread(target=runwatcher, daemon=True)
         SysWatchTread.start()
+        plog(2, 'File Moniter On')
 
     def offfileprotect():
         global set_ui
@@ -919,6 +967,7 @@ def setyq():
         readini.write(open('cfg.ini', 'r+'))
         global ProtectF
         ProtectF = False
+        plog(2, 'File Moniter Off')
 
     def onproessp():
         global set_ui
@@ -930,6 +979,7 @@ def setyq():
         readini.write(open('cfg.ini', 'r+'))
         threading.Thread(target=proess_watcher, daemon=True).start()
         prosswa = True
+        plog(2, 'Process Moniter On')
 
     def offproessp():
         global prosswa
@@ -940,6 +990,7 @@ def setyq():
         set_ui.label_4.setText('进程监控：关闭')
         readini.write(open('cfg.ini', 'r+'))
         prosswa = False
+        plog(2, 'Process Moniter Off')
 
     def onmbr():
         global set_ui
@@ -951,6 +1002,7 @@ def setyq():
         readini.write(open('cfg.ini', 'r+'))
         threading.Thread(target=mbrwatcher, daemon=True).start()
         watchmbra = True
+        plog(2, 'Boot Moniter On')
 
     def offmbr():
         global watchmbra
@@ -961,6 +1013,7 @@ def setyq():
         set_ui.label_8.setText('引导监控：关闭')
         readini.write(open('cfg.ini', 'r+'))
         watchmbra = False
+        plog(2, 'Boot Moniter Off')
 
     def onscan_skip_big_file():
         global set_ui
@@ -971,6 +1024,7 @@ def setyq():
         set_ui.label_11.setText('扫描跳过大文件：开启')
         readini.write(open('cfg.ini', 'r+'))
         scan_skip_big_file = True
+        plog(2, 'Skip On')
 
     def offscan_skip_big_file():
         global scan_skip_big_file
@@ -981,6 +1035,7 @@ def setyq():
         set_ui.label_11.setText('扫描跳过大文件：关闭')
         readini.write(open('cfg.ini', 'r+'))
         scan_skip_big_file = False
+        plog(2, 'Skip Off')
 
     def onregw():
         global set_ui
@@ -992,6 +1047,7 @@ def setyq():
         readini.write(open('cfg.ini', 'r+'))
         watchreg = True
         threading.Thread(target=reg_mot, daemon=True).start()
+        plog(2, 'Register Moniter On')
 
     def offregw():
         global watchreg
@@ -1002,6 +1058,7 @@ def setyq():
         set_ui.label_9.setText('注册表监控：关闭')
         readini.write(open('cfg.ini', 'r+'))
         watchreg = False
+        plog(2, 'Register Moniter Off')
 
     def onpe():
         global set_ui
@@ -1010,6 +1067,7 @@ def setyq():
         readini.set('scan', 'pe', 'True')
         set_ui.label_13.setText('PE启发式引擎：开启')
         readini.write(open('cfg.ini', 'r+'))
+        plog(2, 'PE Engine On')
 
     def offpe():
         global set_ui
@@ -1018,6 +1076,7 @@ def setyq():
         readini.set('scan', 'pe', 'False')
         set_ui.label_13.setText('PE启发式引擎：关闭')
         readini.write(open('cfg.ini', 'r+'))
+        plog(2, 'PE Engine Off')
 
     def onc():
         global set_ui
@@ -1026,6 +1085,7 @@ def setyq():
         readini.set('scan', 'cloud', 'True')
         set_ui.label_12.setText('云端扫描引擎：开启')
         readini.write(open('cfg.ini', 'r+'))
+        plog(2, 'Cloud Engine On')
 
     def offc():
         global set_ui
@@ -1034,22 +1094,25 @@ def setyq():
         readini.set('scan', 'cloud', 'False')
         set_ui.label_12.setText('云端扫描引擎：关闭')
         readini.write(open('cfg.ini', 'r+'))
+        plog(2, 'Cloud Engine Off')
 
     def tw_down():
         global set_ui
         readini = ConfigParser()
         readini.read('cfg.ini', encoding='utf-8')
         readini.set('scan', 'updateweb', 'https://down2.hezhongkj.top')
-        set_ui.label_15.setText('设置镜像源：河众台湾源')
+        set_ui.label_15.setText('设置镜像源：河众2源（坏了）')
         readini.write(open('cfg.ini', 'r+'))
+        plog(2, 'UpdateServer update to https://down2.hezhongkj.top')
 
     def gz_down():
         global set_ui
         readini = ConfigParser()
         readini.read('cfg.ini', encoding='utf-8')
         readini.set('scan', 'updateweb', 'https://bbs.hezhongkj.top')
-        set_ui.label_15.setText('设置镜像源：河众大陆源')
+        set_ui.label_15.setText('设置镜像源：河众1源（主要）')
         readini.write(open('cfg.ini', 'r+'))
+        plog(2, 'UpdateServer update to https://bbs.hezhongkj.top')
 
     def offdlw():
         global set_ui
@@ -1058,6 +1121,7 @@ def setyq():
         readini.set('setting', 'dlw', 'False')
         set_ui.label_19.setText('深度学习参与监控：关闭')
         readini.write(open('cfg.ini', 'r+'))
+        plog(2, 'DeepLearning Moniter On')
 
     def ondlw():
         global set_ui
@@ -1066,6 +1130,7 @@ def setyq():
         readini.set('setting', 'dlw', 'True')
         set_ui.label_19.setText('深度学习参与监控：开启')
         readini.write(open('cfg.ini', 'r+'))
+        plog(2, 'DeepLearning Moniter Off')
 
     def closeEvent8(event):
         event.ignore()
@@ -1163,6 +1228,7 @@ def setyq():
 
 
 clickerconnect = False
+plog(2, 'Config Set Loaded')
 
 
 class guiscan:
@@ -1188,8 +1254,10 @@ class guiscan:
         self.thread_class_scan_1 = None
 
     def getfilepathgui(self):
+
         self.directory = qtw.QFileDialog.getExistingDirectory(None, "选择文件夹", '')
         scan_ui.label.setText(self.directory)
+        plog(2, f'Scan Path:{self.directory}')
 
     def setrun(self):
         self.run = True
@@ -1214,7 +1282,6 @@ class guiscan:
         self.gelilist = []
         global scan_ui
         count = scan_ui.listWidget.count()  # 得到QListWidget的总个数
-        print(count)
         glwidght_list = [scan_ui.listWidget.itemWidget(scan_ui.listWidget.item(i))
                          for i in range(count)]
         g = 0
@@ -1223,13 +1290,12 @@ class guiscan:
                 self.gelilist.append(self.infectedfileslist[g])
                 # self.gelilist.append(cb.text().split(']')[0])
             g += 1
-        print(self.gelilist)
 
         for gelifile in self.gelilist:
             try:
                 scan_ui.label_4.setText('处理中：{}'.format(gelifile))
                 QCoreApplication.processEvents()
-                print('加密文件：{}'.format(gelifile))
+                plog(2, f'Encrypt File:{gelifile}')
 
                 with open(gelifile, 'rb') as f:
                     filebytes = f.read()
@@ -1240,14 +1306,15 @@ class guiscan:
                 filenumber = os.path.basename(lastf)
                 with open('{}'.format(lastf), 'wb') as f:
                     f.write(fb)
+                plog(2, f'Write Config:{gelifile}')
                 with open('./Malwaregl/{}.ini'.format(filenumber), 'w', encoding='utf-8') as f:
                     f.write(gelifile)
-                print('删除病毒文件！')
+                plog(2, f'Del File:{gelifile}')
                 os.remove(gelifile)
                 self.infectedfiles -= 1
                 QCoreApplication.processEvents()
-            except:
-                pass
+            except Exception:
+                plog(1, traceback.format_exc())
         scan_ui.label_4.setText('所有风险已经处理完成！')
 
     def govirusscan(self, autostart=False, stpath=None):  # 扫描病毒
@@ -1261,9 +1328,9 @@ class guiscan:
         scan_ui.label_4.setText('还没有扫描')
 
         if scanwindow.isVisible():
-            print('pass')
             pass
         else:
+            plog(2, 'Set QT UI Config')
             scan_ui.listWidget.setHorizontalScrollBarPolicy(PyQt5.QtCore.Qt.ScrollBarAlwaysOn)
             scan_ui.listWidget.setHorizontalScrollMode(qtw.QAbstractItemView.ScrollPerPixel)
             scan_ui.listWidget.setSizeAdjustPolicy(qtw.QListWidget.AdjustToContents)
@@ -1288,11 +1355,11 @@ class guiscan:
 
                 # scan_ui.label_6.setText('已经扫描：{}'.format(scansfile))
                 if md5virus[0]:
-                    print('MD5')
                     self.infectedfiles += 1
                     self.scanlog += '-> 发现了：Malware.Gen'
                     self.thread_scan_fin = True
                     self.thread_scan_virname = 'Malware.Gen'
+                    plog(2, f'FOUND Threat:{self.thread_scan_virname}')
                     return 0
                 if usec == 'True':
                     clor = VirusScan.cscan(Avscanclass, heurmd5name)
@@ -1301,26 +1368,26 @@ class guiscan:
                         self.scanlog += '-> 发现了：Malware.Gen(qc)'
                         self.thread_scan_virname = 'Malware.Gen(qc)'
                         self.thread_scan_fin = True
+                        plog(2, f'FOUND Threat:{self.thread_scan_virname}')
                         return 0
+
 
 
 
 
                 if useyara == 'True' or useyara is True:  # Yara检查未知病毒
                     yaa = VirusScan.yarascan(Avscanclass, yardb, file, fda)
-                    print(yaa)
                     if yaa is None:
                         pass
                     else:
-                        print(str(yaa[0]))
                         yaa22 = virusnamedecode(str(yaa[0]))
-                        print(yaa22)
                         self.infectedfiles += 1
                         scan_ui.label_5.setText('发现病毒：{}'.format(self.infectedfiles))
                         self.scanlog += '-> 发现了：{}'.format(yaa22)
                         QCoreApplication.processEvents()
                         self.thread_scan_virname = yaa22
                         self.thread_scan_fin = True
+                        plog(2, f'FOUND Threat:{self.thread_scan_virname}')
                         return 0
                 if usepe == 'True':
                     try:
@@ -1331,11 +1398,11 @@ class guiscan:
                             self.scanlog += '-> 发现了：HEUR:Trojan.Generic'
                             self.thread_scan_virname = 'HEUR:Trojan.Generic'
                             self.thread_scan_fin = True
+                            plog(2, f'FOUND Threat:{self.thread_scan_virname}')
                             return 0
                     except:
                         pass
                 if useheur == 'True':
-                    print('fff')
                     try:
                         pefile.PE(file)
                     except Exception:
@@ -1348,8 +1415,6 @@ class guiscan:
                         # print(flist)
                         flabels = numpy.zeros((1,))
                         pred = VirusScan.predict(Avscanclass, model, file, flabels, fda, 1, 0)
-
-                        print(pred[0])
                         try:
                             if float(pred[0][0]) >= 0.9:
                                 ml_virusname = 'DL.Trojan.{}.a'.format(round(float(pred[0][0]) * 100))
@@ -1360,12 +1425,14 @@ class guiscan:
                             else:
                                 ml_virusname = None
                         except IndexError:
+                            plog(1, traceback.format_exc())
                             ml_virusname = None
                         if ml_virusname is not None:
                             self.scanlog += '-> 发现了：{}'.format(ml_virusname)
                             self.infectedfiles += 1
                             self.thread_scan_fin = True
                             self.thread_scan_virname = ml_virusname
+                            plog(2, f'FOUND Threat:{self.thread_scan_virname}')
                             return 0
                         else:
                             self.thread_scan_fin = True
@@ -1375,6 +1442,7 @@ class guiscan:
             except:
                 self.thread_scan_virname = None
                 self.thread_scan_fin = True
+                plog(1, traceback.format_exc())
                 return 0
 
         # 修改pushButton_2按钮的处理部分
@@ -1382,14 +1450,13 @@ class guiscan:
         def start_scan(stpaths=''):
             global scan_ui
             global scanwindow
-            print(stpaths)
             if stpaths == '' or stpaths == False:
                 pass
             else:
-                print('似乎启动了右键扫描！')
+                plog(2, 'Right Click?' + stpaths)
+
                 self.directory = stpaths
                 scan_ui.label.setText(self.directory)
-            print(self.directory)
             if not self.directory:
                 return 0
             self.scanlog = ''
@@ -1403,6 +1470,7 @@ class guiscan:
                 knoviruses = len(f.readlines())
             with open('bd/white.data') as f:
                 whitedb = f.read()
+            plog(2, 'Loaded VirusDataBase')
 
             starttimes = time.time()
             _atimes_ = time.localtime()
@@ -1442,10 +1510,9 @@ class guiscan:
             useheur = conf['scan']['heur']
             usepe = conf['scan']['pe']
             usec = conf['scan']['cloud']
-            print(useheur)
             scan_skip_big_file = conf['scan']['big']
             model = load_model('./bd/hzml.h5')
-            print(yararule_co)
+            plog(2, 'Loaded UI and Config')
 
 
             def scaners(fileer):
@@ -1500,7 +1567,7 @@ class guiscan:
             try:
                 scaners(self.directory)
             except Exception as fe:
-                pass
+                plog(1, traceback.format_exc())
 
             self.scanlog += f'\n扫描已经完成。耗时{round(time.time() - starttimes, 2)}秒钟，扫描{self.scansfile}文件，扫描{self.infectedfiles}个检测。'
             self.scaansf = None
@@ -1514,7 +1581,6 @@ class guiscan:
 
 
         scan_ui.pushButton_2.clicked.connect(start_scan)
-        print(autostart)
         if autostart:
             start_scan(stpath)
 
@@ -1523,6 +1589,7 @@ def update2check():
     cg = ConfigParser()
     cg.read('cfg.ini')
     down_URL = cg['scan']['updateweb']
+    plog(2, 'Loaded Update Server Config')
     global upui
     global upwin
     if upwin.isVisible():
@@ -1532,13 +1599,20 @@ def update2check():
     app = wx.App(False)
     with open('./bd/ver.dll', 'rt') as f:
         ve = f.read()
-    latve = requests.get(f'{down_URL}/down/ver.txt', verify=False).text
+    plog(2, 'Request Server')
+    try:
+        latve = requests.get(f'{down_URL}/down/ver.txt', verify=False).text
+    except:
+        plog(1, traceback.format_exc())
+
 
     if latve == ve:
         wx.MessageDialog(None, f'你已经更新到最新版本了！', '更新', wx.YES_NO | wx.ICON_WARNING).ShowModal()
+        plog(2, 'Latest Version!')
         upwin.hide()
         return 0
     dlg = wx.MessageDialog(None, f'发现病毒数据库可以更新！是否更新？', '更新', wx.YES_NO | wx.ICON_WARNING)
+
     resu = dlg.ShowModal() == wx.ID_YES
     dlg.Destroy()
     if resu:
@@ -1546,12 +1620,13 @@ def update2check():
             intver = int(ve)
             intlatver = int(latve)
             chaj = intlatver - intver
-            print(chaj)
             for i_i in range(chaj):
                 resp1 = requests.get(f'{down_URL}/down/vdbs/{i_i + 1 + intver}.vdb', stream=True,
                                      verify=False)
-                print(resp1.headers)
-                total1 = int(resp1.headers.get('content-length', 0))
+                try:
+                    total1 = int(resp1.headers.get('content-length', 0)) / 1024
+                except:
+                    total1 = 0
                 ci1 = 0
                 upui.label_3.setText(f'{down_URL}/down/vdbs/{i_i + 1 + intver}.vdb')
                 with open('bd/bd.vdb', 'ab') as f:
@@ -1560,13 +1635,19 @@ def update2check():
                             ci1 += len(chunk1)
                             f.write(chunk1)
                             # 更新进度条和下载大小显示（进度条将会是不确定的）
-                            upui.progressBar.setRange(0, 0)  # 或者使用其他方法来表示不确定的进度
+                            if total1 == 0:
+                                upui.progressBar.setRange(0, 0)
+                            else:
+                                upui.progressBar.setRange((ci1 / 1024) / total1 * 100)
                             upui.label_4.setText('{}KB 已下载'.format(round(ci1 / 1024, 2)))
                             QCoreApplication.processEvents()
         except:
+            plog(1, traceback.format_exc())
             resp1 = requests.get(f'{down_URL}/down/bd.vdb', stream=True, verify=False)
-            print(resp1.headers)
-            total1 = int(resp1.headers.get('content-length', 0))
+            try:
+                total1 = int(resp1.headers.get('content-length', 0)) / 1024
+            except:
+                total1 = 0
             ci1 = 0
             upui.label_3.setText(f'下载文件：{down_URL}/down/bd.vdb')
             with open('bd/bd.vdb', 'wb') as f:
@@ -1575,25 +1656,36 @@ def update2check():
                         ci1 += len(chunk1)
                         f.write(chunk1)
                         # 更新进度条和下载大小显示（进度条将会是不确定的）
-                        upui.progressBar.setRange(0, 0)  # 或者使用其他方法来表示不确定的进度
+                        if total1 == 0:
+                            upui.progressBar.setRange(0, 0)
+                        else:
+                            upui.progressBar.setValue((ci1 / 1024) / total1 * 100)
                         upui.label_4.setText('{}KB 已下载'.format(round(ci1 / 1024, 2)))
                         QCoreApplication.processEvents()
 
         resp2 = requests.get(f'{down_URL}/down/ver.txt', stream=True, verify=False)
-        total2 = int(resp2.headers.get('content-length', 0))
+        try:
+            total2 = int(resp2.headers.get('content-length', 0)) / 1024
+        except:
+            total2 = 0
         ci2 = 0
         upui.label_3.setText(f'下载文件：{down_URL}/down/ver.txt')
         with open('bd/ver.dll', 'wb') as f:
             for chunk2 in resp2.iter_content(chunk_size=1024):
                 if chunk2:  # 过滤掉保持连接的空白chunk
-                    ci1 += len(chunk2)
+                    ci2 += len(chunk2)
                     f.write(chunk2)
-                    # 更新进度条和下载大小显示（进度条将会是不确定的）
-                    upui.progressBar.setRange(0, 0)  # 或者使用其他方法来表示不确定的进度
+                    if total2 == 0:
+                        upui.progressBar.setRange(0, 0)
+                    else:
+                        upui.progressBar.setValue((ci2 / 1024) / total2 * 100)
                     upui.label_4.setText('{}KB 已下载'.format(round(ci2 / 1024, 2)))
                     QCoreApplication.processEvents()
         resp3 = requests.get(f'{down_URL}/down/data1.vdb', stream=True, verify=False)
-        total3 = int(resp3.headers.get('content-length', 0))
+        try:
+            total3 = int(resp3.headers.get('content-length', 0)) / 1024
+        except:
+            total3 = 0
         ci3 = 0
         upui.label_3.setText(f'下载文件：{down_URL}/down/data1.vdb')
         with open('bd/white.data', 'wb') as f:
@@ -1601,12 +1693,17 @@ def update2check():
                 if chunk3:  # 过滤掉保持连接的空白chunk
                     ci3 += len(chunk3)
                     f.write(chunk3)
-                    # 更新进度条和下载大小显示（进度条将会是不确定的）
-                    upui.progressBar.setRange(0, 0)  # 或者使用其他方法来表示不确定的进度
+                    if total3 == 0:
+                        upui.progressBar.setRange(0, 0)
+                    else:
+                        upui.progressBar.setValue((ci3 / 1024) / total3 * 100)
                     upui.label_4.setText('{}KB 已下载'.format(round(ci3 / 1024, 2)))
                     QCoreApplication.processEvents()
         resp4 = requests.get(f'{down_URL}/down/malware.yar', stream=True, verify=False)
-        total4 = int(resp3.headers.get('content-length', 0))
+        try:
+            total4 = int(resp4.headers.get('content-length', 0)) / 1024
+        except:
+            total4 = 0
         ci4 = 0
         upui.label_3.setText(f'下载文件：{down_URL}/down/malware.yar')
         with open('bd/yara/malware.yar', 'wb') as f:
@@ -1614,18 +1711,21 @@ def update2check():
                 if chunk4:  # 过滤掉保持连接的空白chunk
                     ci4 += len(chunk4)
                     f.write(chunk4)
-                    # 更新进度条和下载大小显示（进度条将会是不确定的）
-                    upui.progressBar.setRange(0, 0)  # 或者使用其他方法来表示不确定的进度
+                    if total4 == 0:
+                        upui.progressBar.setRange(0, 0)
+                    else:
+                        upui.progressBar.setValue((ci4 / 1024) / total4 * 100)
                     upui.label_4.setText('{}KB 已下载'.format(round(ci4 / 1024, 2)))
                     QCoreApplication.processEvents()
 
-        # re1 = requests.get('https://bbs.hezhongkj.top/down/bd.fne', verify=False).text
+        # re1 = requests.get('https://bbs.hezhongkj.tosetValuep/down/bd.fne', verify=False).text
         # re2 = requests.get('https://bbs.hezhongkj.top/down/ver.txt', verify=False).text
         # re3 = requests.get('https://bbs.hezhongkj.top/down/data1.vdb', verify=False).text
         # re4 = requests.get('https://bbs.hezhongkj.top/down/malware.yar', verify=False).text
 
     dl = wx.MessageDialog(None, f'更新完成！', '更新',
                           wx.YES_DEFAULT | wx.ICON_QUESTION)
+    plog(2, 'Update Finish!')
 
     upwin.hide()
     resu_ = dl.ShowModal() == wx.ID_YES
@@ -1634,19 +1734,25 @@ def update2check():
 
 
 def update1check():
+    down_URL = cg['scan']['updateweb']
+    plog(2, 'Loaded Update Server Config')
     if upwin.isVisible():
         pass
     else:
         upwin.show()
-    vet = requests.get('https://bbs.hezhongkj.top/down/ve.dll', verify=False).text
+    plog(2, 'Request Server')
+    vet = requests.get(f'{down_URL}/down/ve.dll', verify=False).text
     with open('bd/ve.dll', 'r') as f:
         ve = f.read()
+
+
 
     if ve != vet:
         app = wx.App(False)  # 创建一个wxPython的App实例
 
         dlg = wx.MessageDialog(None, f'发现软件主程序可以更新！是否更新？',
                                '更新', wx.YES_NO | wx.ICON_WARNING)
+        plog(2, 'Try to Update VirusDataBase')
         result = dlg.ShowModal() == wx.ID_YES
         dlg.Destroy()
         app.MainLoop()  # 启动wxPython的主事件循环
@@ -1655,17 +1761,22 @@ def update1check():
                              wx.YES_DEFAULT | wx.ICON_QUESTION)
         else:
             return 0
-        resp9 = requests.get('https://bbs.hezhongkj.top/down/Setup.exe', stream=True, verify=False)
-        print(resp9.headers)
+        resp9 = requests.get(f'{down_URL}/down/Setup.exe', stream=True, verify=False)
         ci9 = 0
-        upui.label_3.setText('下载文件：https://bbs.hezhongkj.top/down/Setup.exe')
+        try:
+            total9 = int(resp9.headers.get('content-length', 0)) / 1024
+        except:
+            total9 = 0
+        upui.label_3.setText(f'下载文件：{down_URL}/down/Setup.exe')
         with open('Setup.exe', 'wb') as f:
             for chunk9 in resp9.iter_content(chunk_size=1024):
                 if chunk9:  # 过滤掉保持连接的空白chunk
                     ci9 += len(chunk9)
                     f.write(chunk9)
-                    # 更新进度条和下载大小显示（进度条将会是不确定的）
-                    upui.progressBar.setRange(0, 0)  # 或者使用其他方法来表示不确定的进度
+                    if total9 == 0:
+                        upui.progressBar.setRange(0, 0)
+                    else:
+                        upui.progressBar.setValue((ci9 / 1024) / total9 * 100)
                     upui.label_4.setText('{}KB 已下载'.format(round(ci9 / 1024, 2)))
                     QCoreApplication.processEvents()
 
@@ -1688,13 +1799,14 @@ def geliqu():
     glwin.show()
     glui.textBrowser.setText('')
     glui.textBrowser.append('注意：出现{}*{}是因为一些软件已知问题，请无视！')
+    plog(2, 'Open Quarantine')
 
     for i in all:
         try:
             allf.append(i.split('.')[0])
         except Exception:
-            pass
-    print(allf)
+            plog(1, traceback.format_exc())
+
     allf___ = allf
 
     for i in allf___:
@@ -1704,13 +1816,13 @@ def geliqu():
             glui.textBrowser.append(f'文件编号：{i}，源目录：{recpath}')
             QCoreApplication.processEvents()
         except:
-            pass
+            plog(1, traceback.format_exc())
 
     def hf():
-        print('C')
+
         if 1:
             countinput = glui.lineEdit.text()
-            print('')
+
             if '-' in countinput:
                 count1 = countinput.split('-')[0]
                 count2 = countinput.split('-')[1]
@@ -1724,6 +1836,7 @@ def geliqu():
                         f.write(decofile)
                     os.remove(f'./Malwaregl/{ii}.tro')
                     os.remove(f'./Malwaregl/{ii}.tro.ini')
+                    plog(2, f'Back File {filenumber}')
                     glui.label.setText(f'恢复：{filenumber}')
                     glui.textBrowser.setText('')
                     QCoreApplication.processEvents()
@@ -1734,8 +1847,8 @@ def geliqu():
                             allf.append(i.split('.')[0])
 
                         except Exception:
-                            pass
-                    print(allf)
+                            plog(1, traceback.format_exc())
+
                     allf___ = allf
 
                     for i in allf___:
@@ -1745,7 +1858,7 @@ def geliqu():
                             glui.textBrowser.append(f'文件编号：{i}，源目录：{recpath}')
                             QCoreApplication.processEvents()
                         except:
-                            pass
+                            plog(1, traceback.format_exc())
             else:
                 with open(f'./Malwaregl/{countinput}.tro') as f:
                     encryptsfile = f.read()
@@ -1757,6 +1870,7 @@ def geliqu():
                 os.remove(f'./Malwaregl/{countinput}.tro')
                 os.remove(f'./Malwaregl/{countinput}.tro.ini')
                 glui.label.setText(f'恢复：{filenumber}')
+                plog(2, f'Back File {filenumber}')
                 glui.textBrowser.setText('')
                 QCoreApplication.processEvents()
                 for i in all:
@@ -1766,8 +1880,8 @@ def geliqu():
                         allf.append(i.split('.')[0])
 
                     except Exception:
-                        pass
-                print(allf)
+                        plog(1, traceback.format_exc())
+
                 allf___ = allf
 
                 for i in allf___:
@@ -1777,7 +1891,7 @@ def geliqu():
                         glui.textBrowser.append(f'文件编号：{i}，源目录：{recpath}')
                         QCoreApplication.processEvents()
                     except:
-                        pass
+                        plog(1, traceback.format_exc())
 
     glui.pushButton.clicked.connect(hf)
 
@@ -1785,7 +1899,6 @@ def geliqu():
 def about():
     global abwin
     if abwin.isVisible():
-        print('pass')
         pass
     else:
         abwin.show()
@@ -1857,7 +1970,7 @@ class UpdateProtectText_m(object):
                 mainui.label_6.setStyleSheet("color:green")
 
         except Exception as fe:
-            pass
+            plog(1, traceback.format_exc())
 
 
 def maingui():
@@ -1874,40 +1987,39 @@ def maingui():
     global uptext_single
 
     def cfbutton1():
-        print('按钮触发1')
         # 显示已创建的ScanWindow实例
         try:
             # 显示已创建的ScanWindow实例
             _a = guiscan()
             _a.govirusscan()
         except Exception as e:
-            print("异常:", e)
+            plog(1, traceback.format_exc())
 
     def cfbutton2():
-        print('按钮触发2')
+
 
         try:
 
             setyq()
         except Exception as e:
-            print("异常:", e)
+            plog(1, traceback.format_exc())
 
     def cfbutton3():
-        print('按钮触发3')
+
 
         try:
             geliqu()
         except:
-            pass
+            plog(1, traceback.format_exc())
 
     def cfbutton4():
-        print('按钮触发4')
+
 
         try:
 
             about()
         except Exception as e:
-            print("异常:", e)
+            plog(1, traceback.format_exc())
 
     def closeEvent(event):
         event.ignore()
@@ -2023,7 +2135,7 @@ if __name__ == "__main__":
             else:
                 exit()
         except Exception as e:
-            print("异常:", e)
+            plog(1, traceback.format_exc())
     else:
         cg = ConfigParser()
         cg.read('cfg.ini')
@@ -2034,11 +2146,9 @@ if __name__ == "__main__":
             threading.Thread(target=proess_watcher, daemon=True).start()
             prosswa = True
         if cg['setting']['watchmbr'] == 'True':
-            print('r')
             threading.Thread(target=mbrwatcher, daemon=True).start()
             watchmbra = True
         if cg['setting']['watchreg'] == 'True':
-            print('r')
             watchreg = True
             threading.Thread(target=reg_mot, daemon=True).start()
 
