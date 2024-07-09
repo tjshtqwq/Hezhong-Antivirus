@@ -4,6 +4,9 @@ import traceback
 import colorama as cama
 from langdict import langdict
 from configparser import ConfigParser
+import os
+
+os.chdir(os.path.abspath(os.path.dirname(__file__)))
 
 languageini = ConfigParser()
 languageini.read('cfg.ini', encoding='utf-8')
@@ -2108,8 +2111,6 @@ parser.add_argument('-sf', '--scanfile', type=str, default='')
 args = parser.parse_args()
 
 if __name__ == "__main__":
-    os.chdir(os.path.abspath(os.path.dirname(__file__)))
-
     global scan_ui
     global scanwindow
     sys.excepthook = except_hook
