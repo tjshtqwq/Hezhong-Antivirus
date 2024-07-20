@@ -660,7 +660,7 @@ def show_noti(path, name): # 显示通知
             button.config(text=trans(f'我知道了'))
             window.destroy()
 
-    button = tk.Button(window, text=trans("我知道了（5秒）", command=close_window, width=50, height=3))
+    button = tk.Button(window, text=trans("我知道了（5秒）"), command=close_window, width=50, height=3)
     button.pack()
     ti = 5
     countdown(button, window, ti)
