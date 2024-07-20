@@ -1,4 +1,5 @@
 # Hezhong AntiVirus
+import json
 import shutil
 import traceback
 import colorama as cama
@@ -1755,7 +1756,7 @@ def update1check():
     else:
         upwin.show()
     plog(2, 'Request Server')
-    vet = requests.get(f'{down_URL}/down/ve.dll', verify=False).text
+    vet = requests.get(f'{down_URL}/down/ve_new.dll', verify=False).text
     with open('bd/ve.dll', 'r') as f:
         ve = f.read()
 
@@ -1766,7 +1767,6 @@ def update1check():
 
         dlg = wx.MessageDialog(None, trans(f'发现软件主程序可以更新！是否更新？'),
                                trans('更新'), wx.YES_NO | wx.ICON_WARNING)
-        plog(2, 'Try to Update VirusDataBase')
         result = dlg.ShowModal() == wx.ID_YES
         dlg.Destroy()
         app.MainLoop()  # 启动wxPython的主事件循环
@@ -1775,31 +1775,55 @@ def update1check():
                              wx.YES_DEFAULT | wx.ICON_QUESTION)
         else:
             return 0
-        resp9 = requests.get(f'{down_URL}/down/Setup.exe', stream=True, verify=False)
-        ci9 = 0
+        plog(2, 'Try to Update')
         try:
-            total9 = int(resp9.headers.get('content-length', 0)) / 1024
+            urljson = requests.get(f'{down_URL}/down/api/v1/updatejson/{ve}.json').text
         except:
-            total9 = 0
-        upui.label_3.setText(f'下载文件：{down_URL}/down/Setup.exe')
-        with open('Setup.exe', 'wb') as f:
-            for chunk9 in resp9.iter_content(chunk_size=1024):
-                if chunk9:  # 过滤掉保持连接的空白chunk
-                    ci9 += len(chunk9)
-                    f.write(chunk9)
-                    if total9 == 0:
-                        upui.progressBar.setRange(0, 0)
-                    else:
-                        upui.progressBar.setValue((ci9 / 1024) / total9 * 100)
-                    upui.label_4.setText('{}KB 已下载'.format(round(ci9 / 1024, 2)))
-                    QCoreApplication.processEvents()
+            dlg = wx.MessageDialog(None, trans(f'无法连接更新服务器，可能由以下原因造成：\n1、你在非中国大陆地区，被网站防火墙拦截。\n请尝试访问网站：https://bbs.hezhongkj.top 通过验证即可更新。'
+                                               f'\n2、你的网络无法连接服务器\n请尝试更换下载源或者手动更新\n3、软件Bug\n请反馈。'),
+                                   trans('更新'), wx.YES_NO | wx.ICON_WARNING)
+        downloads = json.loads(urljson)['downloads']
+        runs = json.loads(urljson)['runs']
+        filesurls = {}
+        for downl in downloads:
+            plog(2, {downl['file']: downl['urls']})
+            filesurls.update({downl['file']: downl['urls']})
 
-        wx.MessageDialog(None, trans(f'更新需要关闭软件以及所有防护'), trans('更新'),
-                         wx.YES_DEFAULT | wx.ICON_QUESTION).ShowModal()
-        os.popen('start Setup.exe')
-        sys.exit()
+
+        for file in filesurls:
+            plog(2, f'{file} , {filesurls[file]}')
+            for url in filesurls[file]:
+                plog(2, url)
+                try:
+                    resp9 = requests.get(url, stream=True, verify=False)
+                    ci9 = 0
+                    try:
+                        total9 = int(resp9.headers.get('content-length', 0)) / 1024
+                    except:
+                        total9 = 0
+                    upui.label_3.setText(f'下载文件：{url}')
+                    with open(file, 'wb') as f:
+                        for chunk9 in resp9.iter_content(chunk_size=1024):
+                            if chunk9:  # 过滤掉保持连接的空白chunk
+                                ci9 += len(chunk9)
+                                f.write(chunk9)
+                                if total9 == 0:
+                                    upui.progressBar.setRange(0, 0)
+                                else:
+                                    upui.progressBar.setValue((ci9 / 1024) / total9 * 100)
+                                upui.label_4.setText('{}KB 已下载'.format(round(ci9 / 1024, 2)))
+                                QCoreApplication.processEvents()
+                    wx.MessageDialog(None, trans(f'更新需要关闭软件以及所有防护'), trans('更新'),
+                                     wx.YES_DEFAULT | wx.ICON_QUESTION).ShowModal()
+                    plog(2, runs)
+                    for command in runs:
+                        os.popen(command)
+                    sys.exit()
+                except:
+                    pass
     else:
         update2check()
+
 
 
 global innmu2___, innmu2__, innmu2_
