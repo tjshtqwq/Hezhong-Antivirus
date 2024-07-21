@@ -81,7 +81,7 @@ if is_admin():
     pass
 else:
     ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, __file__, None, 1)
-    sys.exit()
+    sys.exit() 
 '''
 
 
@@ -1644,17 +1644,19 @@ def update2check():
                     total1 = 0
                 ci1 = 0
                 upui.label_3.setText(f'{down_URL}/down/vdbs/{i_i + 1 + intver}.vdb')
+                st = time.time()
                 with open('bd/bd.vdb', 'ab') as f:
                     for chunk1 in resp1.iter_content(chunk_size=1024):
                         if chunk1:  # 过滤掉保持连接的空白chunk
                             ci1 += len(chunk1)
                             f.write(chunk1)
                             # 更新进度条和下载大小显示（进度条将会是不确定的）
+                            et = time.time() - st
                             if total1 == 0:
                                 upui.progressBar.setRange(0, 0)
                             else:
                                 upui.progressBar.setRange((ci1 / 1024) / total1 * 100)
-                            upui.label_4.setText(trans('{}KB 已下载').format(round(ci1 / 1024, 2)))
+                            upui.label_4.setText(trans(f'{round(ci1 / 1024)}/{round(total1)} KB {round((ci1 / 1024) / et)}KB/S {round(((total1) - (ci1 / 1024)) / ((ci1 / 1024) / et))}S Finish'))
                             QCoreApplication.processEvents()
         except:
             plog(1, traceback.format_exc())
@@ -1665,17 +1667,19 @@ def update2check():
                 total1 = 0
             ci1 = 0
             upui.label_3.setText(trans(f'下载文件：{down_URL}/down/bd.vdb'))
+            st = time.time()
             with open('bd/bd.vdb', 'wb') as f:
                 for chunk1 in resp1.iter_content(chunk_size=1024):
                     if chunk1:  # 过滤掉保持连接的空白chunk
                         ci1 += len(chunk1)
                         f.write(chunk1)
                         # 更新进度条和下载大小显示（进度条将会是不确定的）
+                        et = time.time() - st
                         if total1 == 0:
                             upui.progressBar.setRange(0, 0)
                         else:
                             upui.progressBar.setValue((ci1 / 1024) / total1 * 100)
-                        upui.label_4.setText(trans('{}KB 已下载'.format(round(ci1 / 1024, 2))))
+                        upui.label_4.setText(trans(f'{round(ci1 / 1024)}/{round(total1)} KB {round((ci1 / 1024) / et)}KB/S {round(((total1) - (ci1 / 1024)) / ((ci1 / 1024) / et))}S Finish'))
                         QCoreApplication.processEvents()
 
         resp2 = requests.get(f'{down_URL}/down/ver.txt', stream=True, verify=False)
@@ -1685,16 +1689,18 @@ def update2check():
             total2 = 0
         ci2 = 0
         upui.label_3.setText(trans(f'下载文件：{down_URL}/down/ver.txt'))
+        st = time.time()
         with open('bd/ver.dll', 'wb') as f:
             for chunk2 in resp2.iter_content(chunk_size=1024):
                 if chunk2:  # 过滤掉保持连接的空白chunk
                     ci2 += len(chunk2)
                     f.write(chunk2)
+                    et = time.time() - st
                     if total2 == 0:
                         upui.progressBar.setRange(0, 0)
                     else:
                         upui.progressBar.setValue((ci2 / 1024) / total2 * 100)
-                    upui.label_4.setText(trans('{}KB 已下载'.format(round(ci2 / 1024, 2))))
+                    upui.label_4.setText(trans(f'{round(ci2 / 1024)}/{round(total2)} KB {round((ci2 / 1024) / et)}KB/S {round(((total2) - (ci2 / 1024)) / ((ci2 / 1024) / et))}S Finish'))
                     QCoreApplication.processEvents()
         resp3 = requests.get(f'{down_URL}/down/data1.vdb', stream=True, verify=False)
         try:
@@ -1703,16 +1709,18 @@ def update2check():
             total3 = 0
         ci3 = 0
         upui.label_3.setText(trans(f'下载文件：{down_URL}/down/data1.vdb'))
+        st = time.time()
         with open('bd/white.data', 'wb') as f:
             for chunk3 in resp3.iter_content(chunk_size=1):
                 if chunk3:  # 过滤掉保持连接的空白chunk
                     ci3 += len(chunk3)
                     f.write(chunk3)
+                    et = time.time() - st
                     if total3 == 0:
                         upui.progressBar.setRange(0, 0)
                     else:
                         upui.progressBar.setValue((ci3 / 1024) / total3 * 100)
-                    upui.label_4.setText(trans('{}KB 已下载'.format(round(ci3 / 1024, 2))))
+                    upui.label_4.setText(trans(f'{round(ci3 / 1024)}/{round(total3)} KB {round((ci3 / 1024) / et)}KB/S {round(((total3) - (ci3 / 1024)) / ((ci3 / 1024) / et))}S Finish'))
                     QCoreApplication.processEvents()
         resp4 = requests.get(f'{down_URL}/down/malware.yar', stream=True, verify=False)
         try:
@@ -1721,16 +1729,18 @@ def update2check():
             total4 = 0
         ci4 = 0
         upui.label_3.setText(trans(f'下载文件：{down_URL}/down/malware.yar'))
+        st = time.time()
         with open('bd/yara/malware.yar', 'wb') as f:
             for chunk4 in resp4.iter_content(chunk_size=1024):
                 if chunk4:  # 过滤掉保持连接的空白chunk
                     ci4 += len(chunk4)
                     f.write(chunk4)
+                    et = time.time() - st
                     if total4 == 0:
                         upui.progressBar.setRange(0, 0)
                     else:
                         upui.progressBar.setValue((ci4 / 1024) / total4 * 100)
-                    upui.label_4.setText(trans('{}KB 已下载'.format(round(ci4 / 1024, 2))))
+                    upui.label_4.setText(trans(f'{round(ci4 / 1024)}/{round(total4)} KB {round((ci4 / 1024) / et)}KB/S {round(((total4) - (ci4 / 1024)) / ((ci4 / 1024) / et))}S Finish'))
                     QCoreApplication.processEvents()
 
         # re1 = requests.get('https://bbs.hezhongkj.tosetValuep/down/bd.fne', verify=False).text
@@ -1764,8 +1774,17 @@ def update1check():
 
     if ve != vet:
         app = wx.App(False)  # 创建一个wxPython的App实例
-
-        dlg = wx.MessageDialog(None, trans(f'发现软件主程序可以更新！是否更新？'),
+        try:
+            urljson = requests.get(f'{down_URL}/down/api/v1/updatejson/{ve}.json').text
+        except:
+            dlg = wx.MessageDialog(None, trans(f'无法连接更新服务器，可能由以下原因造成：\n1、你在非中国大陆地区，被网站防火墙拦截。\n请尝试访问网站：https://bbs.hezhongkj.top 通过验证即可更新。'
+                                               f'\n2、你的网络无法连接服务器\n请尝试更换下载源或者手动更新\n3、软件Bug\n请反馈。'),
+                                   trans('更新'), wx.YES_NO | wx.ICON_WARNING)
+            return 0
+        downloads = json.loads(urljson)['downloads']
+        runs = json.loads(urljson)['runs']
+        info = json.loads(urljson)['info']
+        dlg = wx.MessageDialog(None, trans(f'发现更新！内容如下：\n{info} \n确定更新？'),
                                trans('更新'), wx.YES_NO | wx.ICON_WARNING)
         result = dlg.ShowModal() == wx.ID_YES
         dlg.Destroy()
@@ -1776,14 +1795,8 @@ def update1check():
         else:
             return 0
         plog(2, 'Try to Update')
-        try:
-            urljson = requests.get(f'{down_URL}/down/api/v1/updatejson/{ve}.json').text
-        except:
-            dlg = wx.MessageDialog(None, trans(f'无法连接更新服务器，可能由以下原因造成：\n1、你在非中国大陆地区，被网站防火墙拦截。\n请尝试访问网站：https://bbs.hezhongkj.top 通过验证即可更新。'
-                                               f'\n2、你的网络无法连接服务器\n请尝试更换下载源或者手动更新\n3、软件Bug\n请反馈。'),
-                                   trans('更新'), wx.YES_NO | wx.ICON_WARNING)
-        downloads = json.loads(urljson)['downloads']
-        runs = json.loads(urljson)['runs']
+
+
         filesurls = {}
         for downl in downloads:
             plog(2, {downl['file']: downl['urls']})
@@ -1802,16 +1815,18 @@ def update1check():
                     except:
                         total9 = 0
                     upui.label_3.setText(f'下载文件：{url}')
+                    st = time.time()
                     with open(file, 'wb') as f:
                         for chunk9 in resp9.iter_content(chunk_size=1024):
                             if chunk9:  # 过滤掉保持连接的空白chunk
                                 ci9 += len(chunk9)
                                 f.write(chunk9)
+                                et = time.time() - st
                                 if total9 == 0:
                                     upui.progressBar.setRange(0, 0)
                                 else:
                                     upui.progressBar.setValue((ci9 / 1024) / total9 * 100)
-                                upui.label_4.setText('{}KB 已下载'.format(round(ci9 / 1024, 2)))
+                                upui.label_4.setText(trans(f'{round(ci9 / 1024)}/{round(total9)} KB {round((ci9 / 1024) / et)}KB/S {round(((total9) - (ci9 / 1024)) / ((ci9 / 1024) / et))}S Finish'))
                                 QCoreApplication.processEvents()
                     wx.MessageDialog(None, trans(f'更新需要关闭软件以及所有防护'), trans('更新'),
                                      wx.YES_DEFAULT | wx.ICON_QUESTION).ShowModal()
