@@ -301,7 +301,14 @@ class VirusScan:
         matches = rule.match(data=fdb)
         if len(matches) > 0:
             return matches
-
+    def getrules(self, rulepath): # 读取yara规则
+        filepath = {}
+        for index, file in enumerate(os.listdir(rulepath)):
+            rupath = os.path.join(rulepath, file)
+            key = "rule" + str(index)
+            filepath[key] = rupath
+        yararule = yara.compile(filepaths=filepath)
+        return yararule
     def getrules(self, rulepath): # 读取yara规则
         filepath = {}
         for index, file in enumerate(os.listdir(rulepath)):
@@ -1833,9 +1840,9 @@ def update1check():
                     plog(2, runs)
                     for command in runs:
                         os.popen(command)
-                    sys.exit()
                 except:
                     pass
+        sys.exit()
     else:
         update2check()
 
@@ -1866,7 +1873,7 @@ def geliqu():
         try:
             with open(f'./Malwaregl/{i}.tro.ini', encoding='utf-8') as f:
                 recpath = f.read()
-            glui.textBrowser.append(trans(f'文件编号：{i}，源目录：{recpath}'))
+                glui.textBrowser.append(trans(f'文件编号：{i}，源目录：{recpath}'))
             QCoreApplication.processEvents()
         except:
             plog(1, traceback.format_exc())
